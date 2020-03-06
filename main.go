@@ -43,13 +43,9 @@ func generateLevel(w http.ResponseWriter, r *http.Request) {
 	response.Location = request.Locations[randomIndex(len(request.Locations))]
 	response.Time = request.Times[randomIndex(len(request.Times))]
 	response.Faction = request.Factions[randomIndex(len(request.Factions))]
-	resp, err := json.Marshal(response)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write(resp)
+	json.NewEncoder(w).Encode(response)
 }
 
 func randomIndex(max int) int {
