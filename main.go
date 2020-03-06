@@ -19,9 +19,9 @@ type Request struct {
 }
 
 type Response struct {
-	Location string
-	Time     string
-	Faction  string
+	Location string `json:"location"`
+	Time     string `json:"time"`
+	Faction  string `json:"faction"`
 }
 
 func main() {
@@ -38,13 +38,18 @@ func generateLevel(w http.ResponseWriter, r *http.Request) {
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		fmt.Fprint(w, "Error on parsing body request")
-	} else {
-		json.Unmarshal(reqBody, &request)
-		response.Location = request.Locations[randomIndex(len(request.Locations))]
-		response.Time = request.Times[randomIndex(len(request.Times))]
-		response.Faction = request.Factions[randomIndex(len(request.Factions))]
-		json.NewEncoder(w).Encode(response)
 	}
+	json.Unmarshal(reqBody, &request)
+	response.Location = request.Locations[randomIndex(len(request.Locations))]
+	response.Time = request.Times[randomIndex(len(request.Times))]
+	response.Faction = request.Factions[randomIndex(len(request.Factions))]
+	resp, err := json.Marshal(response)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(resp)
 }
 
 func randomIndex(max int) int {
