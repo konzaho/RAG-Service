@@ -3,12 +3,13 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/mux"
 	"io/ioutil"
 	"log"
 	"math/rand"
 	"net/http"
 	"time"
+
+	"github.com/gorilla/mux"
 )
 
 type Request struct {
